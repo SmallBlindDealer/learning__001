@@ -1,0 +1,21 @@
+_format_version: "2.1"
+
+services:
+# - name: echo-server
+#   url: http://127.0.0.1:5000
+#   routes:
+#   - name: echo
+#     paths:
+#     - /api/data
+
+- name: echo2
+  # url: http://0.0.0.0:5000 --docker was not listening host machine
+  # url: http://host.docker.internal:5000 --not working
+  host: host.docker.internal
+  port: 5000
+  path: /api/data
+  routes:
+  - name: echo2
+    paths:
+    - /new_path
+
