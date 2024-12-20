@@ -10,3 +10,8 @@ curl http://127.0.0.1:8001/services
 curl http://127.0.0.1:8001/routes
 
 docker-compose logs kong
+
+
+https://konghq.com/blog/engineering/custom-authentication-and-authorization-framework-with-kong
+
+
