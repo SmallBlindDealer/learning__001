@@ -1,0 +1,91 @@
+_format_version: "2.1"
+
+services:
+# - name: echo-server
+#   url: http://127.0.0.1:5000
+#   routes:
+#   - name: echo
+#     paths:
+#     - /api/data
+
+- name: echo2
+  # url: http://0.0.0.0:5000 --docker was not listening host machine
+  # url: http://host.docker.internal:5000 --not working
+  host: host.docker.internal
+  port: 5000
+  path: /api/data
+  routes:
+  - name: echo2
+    paths:
+    - /new_path
+
+plugins:
+- name: cors
+  config:
+    origins:
+    - '*'
+    methods:
+    - GET
+    - POST
+    headers:
+    - Accept
+    - Accept-Version
+    - Content-Length
+    - Content-MD5
+    - Content-Type
+    - Date
+    - X-Auth-Token
+    exposed_headers:
+    - X-Auth-Token
+    credentials: true
+    max_age: 3600
+
+
+- name: rate-limiting
+  config: 
+#    second: 5
+    hour: 1
+    policy: local
+    fault_tolerant: true
+    hide_client_headers: false
+    redis_ssl: false
+    redis_ssl_verify: false
+# comment these if you don't want to store rate limiting data in redis
+#    policy: redis
+#    redis_host: 172.27.59.36
+#    redis_password: example
+
+- name: ip-restriction
+  config: 
+    deny:
+    - 172.28.64.0/24
+    status: 401
+    message: cannot grant access
+
+
+- name: bot-detection
+  config:
+    deny:
+    - "(C|c)hrome"
+    - "curl"
+  enabled: false
+
+
+- name: proxy-cache
+  config: 
+    response_code:
+    - 200
+    request_method:
+    - GET
+    - HEAD
+    content_type:
+    - text/plain
+    - application/json
+    - application/json; charset=utf-8
+    cache_ttl: 300
+    strategy: memory
+  enabled: false
+
+
+
+    
