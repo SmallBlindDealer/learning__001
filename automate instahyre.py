@@ -6,6 +6,20 @@ import logging
 import time
 
 
+def retry_execute(func):
+    def wrap(*args, **kwargs): 
+        c = 3
+        while c:
+            try:
+                func(*args, **kwargs)
+                break
+            except Exception as e:
+                print(str(e))
+            c-=1    
+    return wrap 
+
+
+@retry_execute
 def execute_(driver, querySelector, value, isButton=False):
     _element = driver.find_element(By.CSS_SELECTOR, querySelector)
     if isButton:
@@ -35,31 +49,20 @@ def run_apply(driver, apply_selector=None):
 
 driver = webdriver.Chrome()
 time.sleep(1)
+
 driver.get("https://www.instahyre.com/candidate/opportunities/")
-time.sleep(1)
+
+time.sleep(3)
 email_id = "shiv.s.keshari@gmail.com"
 pass_ = "1qazXsw2@11"
 
 login(driver, email_id, pass_)
 driver.implicitly_wait(10)
-execute_(driver, "#years", 5, isButton=False)
 
 
-# ->>--->
-# manually save filters
-
-# execute_(driver, "#show-results", None, isButton=True)
-# execute_(driver, "#interested-btn", None, isButton=True)
-# run_apply(driver)
-
-"""
-https://www.instahyre.com/candidate/opportunities/?company_size=0&job_functions=%2Fapi%2Fv1%2Fjob_function%2F10&job_type=0&location=Work+From+Home,Bangalore&search=true&skills=Java,Python,Golang,Node.js&years=5
-https://www.instahyre.com/candidate/opportunities/?
-company_size=0&
-job_functions=%2Fapi%2Fv1%2Fjob_function%2F10&
-job_type=0&
-location=Work+From+Home,Bangalore&
-search=true&
-skills=Java,Python,Golang,Node.js&
-years=5
-"""
+# TODO: ->>---> select here save_job_search filter if not create pelase create
+filter_ = "#search-j1"
+execute_(driver, filter_, None, isButton=True)
+execute_(driver, "#show-results", None, isButton=True)
+execute_(driver, "#interested-btn", None, isButton=True)
+run_apply(driver)
