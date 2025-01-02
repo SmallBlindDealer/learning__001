@@ -5,6 +5,9 @@ from selenium.webdriver.common.keys import Keys
 import logging
 import time
 
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.options import Options
+
 
 def retry_execute(func):
     def wrap(*args, **kwargs): 
@@ -12,6 +15,9 @@ def retry_execute(func):
         while c:
             try:
                 func(*args, **kwargs)
+                break
+            except NoSuchElementException:
+                print("no such element!")
                 break
             except Exception as e:
                 print(str(e))
@@ -47,22 +53,39 @@ def run_apply(driver, apply_selector=None):
 
 
 
+
+
+# chrome_options = Options()
+# chrome_options.add_argument("--headless")
+# driver = webdriver.Chrome(options=chrome_options)
+
 driver = webdriver.Chrome()
 time.sleep(1)
+
 
 driver.get("https://www.instahyre.com/candidate/opportunities/")
 
 time.sleep(3)
-email_id = "shiv.s.keshari@gmail.com"
+email_id = "s20051996@gmail.com"
 pass_ = "1qazXsw2@11"
 
 login(driver, email_id, pass_)
 driver.implicitly_wait(10)
 
 
+execute_(driver, "#job-search-section > div.job-search-heading.ng-scope.cursor-pointer", None, isButton=True)
+
 # TODO: ->>---> select here save_job_search filter if not create pelase create
 filter_ = "#search-j1"
+print("-1")
 execute_(driver, filter_, None, isButton=True)
+time.sleep(1)
+print("-2")
 execute_(driver, "#show-results", None, isButton=True)
+time.sleep(1)
+print("-3")
 execute_(driver, "#interested-btn", None, isButton=True)
+time.sleep(1)
+print("-4")
 run_apply(driver)
+# 
