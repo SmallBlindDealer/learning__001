@@ -40,7 +40,6 @@ class BlogPlatform:
 
         self.users[followerId].append(followeeId)
     
-    
     def unfollow(self, followerId :int, followeeId: int)-> None:# -->O(n)
         if followerId not in self.users:
             return "follower user_id doesn't exist"
@@ -53,11 +52,9 @@ class BlogPlatform:
         else:
             return f"user_id {followerId} does't follow user_id {followeeId}"
             
-    
     def publishPost(self, authorId: int, postId: int)-> None: #-->O(1)
         self.post.append({"authorId": authorId, "postId": postId, "datetime": datetime.now()})
 
-    
     def getFeed(self, authorId: int)-> list[int]: #--> O(m*n)
         author_follower_ids = self.users[authorId]
 
