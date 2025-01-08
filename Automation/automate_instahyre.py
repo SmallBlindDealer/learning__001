@@ -15,13 +15,14 @@ def retry_execute(func):
         while c:
             try:
                 func(*args, **kwargs)
-                break
+                return True
             except NoSuchElementException:
                 print("no such element!")
-                break
+                return False
             except Exception as e:
                 print(str(e))
             c-=1    
+        return False
     return wrap 
 
 
@@ -46,7 +47,14 @@ def run_apply(driver, apply_selector=None):
     while True:
         if not apply_selector:
             apply_selector = "#candidate-suggested-employers > div > div:nth-child(3) > div > div > div.application-modal-wrap > div.container > div.row.bar-actions.ng-scope > div.apply.ng-scope > button"
-        execute_(driver, apply_selector, None, isButton=True)
+        res = execute_(driver, apply_selector, None, isButton=True)
+        if not res:
+            not_now = "#enable-whatsapp-modal > div > div > div.application-modal-wrap > div.application-modal-action.text-center.cancel-button > button"
+            res = execute_(driver, not_now, None, isButton=True)
+            if not res:
+                apply = "body > div.application-modal.candidate-apply-all-modal.ng-scope > div > div.application-modal-wrap > div.content.text-center.top-margin > div > div.col-sm-4.col-xs-6.col-sm-offset-2 > button"
+                execute_(driver, apply, None, isButton=True)
+        
         print(c)
         c+=1
         time.sleep(5)
