@@ -1,0 +1,56 @@
+But how those nodes actually communicate  
+
+with the Charles or and how are they managed. 
+In a Kubernetes cluster there was master node  
+
+and other nodes in the cluster are called worker 
+nodes. and master node actually manages worker  
+
+nodes. And if Master nodes job to distribute 
+for example, load across other worker nodes  
+
+and all boards, which are related to your 
+applications are deployed on worker nodes,  
+
+master node runs only system ports, 
+which are responsible for actual  
+
+work of the Kubernetes cluster in general, 
+we could also say that master node in the  
+
+Kubernetes cluster is actually control plane, 
+and it does not run your client applications.  
+
+
+
+
+Cube proxy which is present on each node as 
+well is responsible for network communication  
+
+inside of each node and between nodes. Also, 
+there are other services which are present  
+
+on master node. And they are scheduler and 
+such service is responsible for planning  
+
+and distribution of the Lord between 
+different nodes in the classroom.  
+
+
+the Kubernetes cluster. And it controls actually 
+what happens on each of the nodes in the cluster.  
+
+Also, there was cloud controller manager. And his 
+job is interaction with cloud service provider  
+
+
+DNS  
+
+service which is responsible for names resolution, 
+entire Kubernetes cluster. And for instance,  
+
+using a DNS service, you could connect to specific 
+deployment by the name of the corresponding  
+
+deployment service. And in such way, you could 
+connect different deployments with a job or  
