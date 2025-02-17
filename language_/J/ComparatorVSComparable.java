@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 class Student implements Comparable<Student>{
     int age;
@@ -15,13 +17,15 @@ class Student implements Comparable<Student>{
 
 public class ComparatorVSComparable {
 
-    Comparator<Student> l1 = new Comparator<Student>() {
+    public static Comparator<Student> l1 = new Comparator<Student>() {
         public int compare(Student o1, Student o2){
             return 1;
         }
-        
     };
+    
     public static void main(String[] args) {
         System.out.println("->>--->");
+        List<Student> students = new ArrayList<>();
+        students.sort(l1);
     }
 }
