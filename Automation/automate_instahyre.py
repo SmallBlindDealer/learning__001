@@ -76,7 +76,7 @@ time.sleep(1)
 driver.get("https://www.instahyre.com/candidate/opportunities/")
 
 time.sleep(3)
-email_id = "s20051996@gmail.com"
+email_id = "shiv.s.keshari@gmail.com"
 pass_ = "1qazXsw2@11"
 
 login(driver, email_id, pass_)
