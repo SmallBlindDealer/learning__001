@@ -129,3 +129,4 @@ Ulimit vs Gunicorn (Relationship and Key Difference)
 concurrency vs consistency
 bitmap index
 redis pub sub
+Distributed Tracing vs Distributed Logging

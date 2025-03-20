@@ -1,0 +1,32 @@
+{
+    "f1.csv": {
+            "party_master_ref": {
+                "dtype": "int",
+                "field": "f1"
+            },
+            "accounts_ref": {
+                "dtype": "float",
+                "field": "f2"
+            },
+            "amount": {
+                "dtype": "int",
+                "field": "f3"
+            },
+            "sanction_date": {
+                "dtype": "datetime",
+                "field": "f4"
+            },
+            "reporting_date": {
+                "dtype": "datetime",
+                "field": "f5"
+            },
+            "sanction_type": {
+                "dtype": "string",
+                "field": "f6"
+            },
+            "adhoc_status": {
+                "dtype": "string",
+                "field": "f7"
+            }
+        }
+}
