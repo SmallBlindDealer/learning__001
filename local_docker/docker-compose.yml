@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres
-    container_name: my_postgres
+    container_name: postgres
     restart: always
     environment:
       POSTGRES_USER: myuser
@@ -16,7 +16,7 @@ services:
 
   redis:
     image: redis
-    container_name: my_redis
+    container_name: redis
     restart: always
     command: redis-server --save 60 1 --loglevel warning
     ports:
@@ -26,7 +26,7 @@ services:
 
   mongodb:
     image: mongo
-    container_name: my_mongodb
+    container_name: mongodb
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -36,10 +36,9 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-
   cassandra:
     image: cassandra
-    container_name: my_cassandra
+    container_name: cassandra
     restart: always
     environment:
       CASSANDRA_CLUSTER_NAME: "TestCluster"
@@ -49,10 +48,9 @@ services:
     volumes:
       - cassandra_data:/var/lib/cassandra
 
-
   zookeeper:
     image: confluentinc/cp-zookeeper
-    container_name: my_zookeeper
+    container_name: zookeeper
     restart: always
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -62,7 +60,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka
-    container_name: my_kafka
+    container_name: kafka
     restart: always
     depends_on:
       - zookeeper
@@ -76,8 +74,69 @@ services:
       - "9092:9092"
     volumes:
       - kafka_data:/var/lib/kafka/data
+  # Grafana
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+  
+  mongodb_exporter:
+    image: bitnami/mongodb-exporter:latest
+    container_name: mongodb_exporter
+    ports:
+      - "9216:9216"
+    command:
+      - '--mongodb.uri=mongodb://mongodb:27017'
+  
 
+  redis_exporter:
+    image: oliver006/redis_exporter
+    container_name: redis_exporter
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis://:mypassword@redis:6379
+
+
+
+  kafka_exporter:
+    image: danielqsj/kafka-exporter
+    container_name: kafka_exporter
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=kafka:9092'
+    depends_on:
+      - kafka
+      
+  # Prometheus
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - redis_exporter
+      # - postgres_exporter
+      - kafka_exporter
+      - mongodb_exporter
+      # - cassandra_exporter
+  
+    
 volumes:
+  grafana-data:
+   driver: local
+   driver_opts:
+     type: none
+     device: /Users/shivshankarkeshari/Documents/docker_volume/grafana-data
+     o: bind
   postgres_data:
     driver: local
     driver_opts:
@@ -114,3 +173,8 @@ volumes:
       type: none
       device: /Users/shivshankarkeshari/Documents/docker_volume/kafka-data
       o: bind
+
+
+networks:
+  my_custom_network:
+    driver: bridge

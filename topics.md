@@ -130,3 +130,8 @@ concurrency vs consistency
 bitmap index
 redis pub sub
 Distributed Tracing vs Distributed Logging
+
+Zipkin    (collector)<--push<--server
+Prometheus           -->pull-->server
+Newrelic             <--push<--server
+Logstash             <--push<--server(log watcher)

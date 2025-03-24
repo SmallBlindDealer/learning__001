@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN pip install flask watchdog
+RUN pip install flask watchdog redis
 
 # Run Watchdog with auto-restart
 CMD ["watchmedo", "auto-restart", "--pattern=*.py", "--recursive", "--", "python", "app.py"]
