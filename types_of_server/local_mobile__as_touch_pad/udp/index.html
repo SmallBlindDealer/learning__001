@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchpad</title>
+</head>
+<body style="background-color: black; height: 100vh; width: 100vw; touch-action: none;">
+    <script>
+        window.onload = function() {
+            const udpIP = "192.168.1.2";  // Change to your MacBook's IP
+            const udpPort = 5005;
+
+            let socket = new WebSocket(`ws://${udpIP}:8765`); 
+
+            let lastX = null, lastY = null;
+            let holdTimeout = null;  // Timer for hold click
+            let isHolding = false;
+            let moved = false;  // Track movement
+
+            // 🖱️ Detect touch start (check for hold)
+            document.body.addEventListener("touchstart", function(event) {
+                if (event.touches.length === 1) {
+                    moved = false;  // Reset movement tracking
+
+                    holdTimeout = setTimeout(() => {
+                        if (!moved) {  // ✅ Trigger hold-click only if no movement
+                            isHolding = true;
+                            let message = JSON.stringify({ type: "hold_click" });
+                            if (socket.readyState === WebSocket.OPEN) {
+                                socket.send(message);
+                            }
+                        }
+                    }, 200);  // ⏳ Wait for 3 seconds to activate hold-click
+                } else if (event.touches.length === 2) {
+                    let message = JSON.stringify({ type: "right_click" });
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(message);
+                    }
+                }
+            });
+
+            // 🎨 Detect movement
+            document.body.addEventListener("touchmove", function(event) {
+                let touch = event.touches[0];
+                let x = touch.clientX;
+                let y = touch.clientY;
+
+                if (lastX !== null && lastY !== null) {
+                    let dx = x - lastX;  
+                    let dy = y - lastY;
+
+                    if (dx !== 0 || dy !== 0) {  
+                        moved = true;  // ✅ Mark movement to prevent hold-click
+                    }
+
+                    let message = JSON.stringify({ type: "move", dx, dy, holding: isHolding });
+
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(message);
+                    }
+                }
+
+                lastX = x;
+                lastY = y;
+
+                event.preventDefault();
+            });
+
+            // 🖌️ Detect touch end (click or release hold)
+            document.body.addEventListener("touchend", function() {
+                if (holdTimeout) {
+                    clearTimeout(holdTimeout);
+                }
+
+                if (!isHolding && !moved) {
+                    let message = JSON.stringify({ type: "click" });
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(message);
+                    }
+                } else if (isHolding) {
+                    let message = JSON.stringify({ type: "release_click" });
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(message);
+                    }
+                }
+
+                isHolding = false;
+                lastX = null;
+                lastY = null;
+                moved = false;
+            });
+
+            socket.onopen = () => console.log("Connected to WebSocket!");
+            socket.onerror = (err) => console.error("WebSocket Error:", err);
+        };
+    </script>
+</body>
+</html>
