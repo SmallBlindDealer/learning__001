@@ -1,0 +1,140 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchpad</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #touchpad {
+            width: 100vw;
+            height: 80vh;
+            background: #222;
+            touch-action: none;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <h2>Touchpad (WebSocket Mode)</h2>
+    <p>Move your finger to control the MacBook mouse</p>
+    <canvas id="touchpad"></canvas>
+
+    <script>
+        const socket = io("ws://192.168.1.2:5000");  // Replace with MacBook IP
+
+        let canvas = document.getElementById("touchpad");
+        let ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.8;
+
+        let lastX = null, lastY = null;
+
+        function draw(x, y) {
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        canvas.addEventListener("touchmove", function (event) {
+            event.preventDefault();
+            let touch = event.touches[0];
+
+            if (lastX !== null && lastY !== null) {
+                let dx = touch.clientX - lastX;
+                let dy = touch.clientY - lastY;
+                socket.emit("move", { dx, dy });  // Send data via WebSocket
+                draw(touch.clientX, touch.clientY);
+            }
+
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        });
+
+        canvas.addEventListener("touchend", function () {
+            lastX = null;
+            lastY = null;
+        });
+
+        canvas.addEventListener("click", function () {
+            socket.emit("click");  // Send click event
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchpad (Optimized)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #touchpad {
+            width: 100vw;
+            height: 80vh;
+            background: #222;
+            touch-action: none;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <h2>Touchpad (Optimized)</h2>
+    <p>Move your finger to control the MacBook mouse</p>
+    <canvas id="touchpad"></canvas>
+
+    <script>
+        const socket = io("ws://192.168.1.2:5000");  // Replace with MacBook IP
+
+        let canvas = document.getElementById("touchpad");
+        let ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight * 0.8;
+
+        let lastX = null, lastY = null;
+
+        canvas.addEventListener("touchmove", function (event) {
+            event.preventDefault();
+            let touch = event.touches[0];
+
+            if (lastX !== null && lastY !== null) {
+                let dx = touch.clientX - lastX;
+                let dy = touch.clientY - lastY;
+
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {  // Send only significant movements
+                    socket.emit("move", { dx, dy });
+                }
+            }
+
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+        });
+
+        canvas.addEventListener("touchend", function () {
+            lastX = null;
+            lastY = null;
+        });
+
+        canvas.addEventListener("click", function () {
+            socket.emit("click");  // Send click event
+        });
+    </script>
+</body>
+</html>

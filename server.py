@@ -11,6 +11,30 @@ def hello_world():
 
 
 
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5000)  # Runs on all network interfaces
+
+
+from flask import Flask, request
+import pyautogui
+
+app = Flask(__name__)
+
+@app.route('/move', methods=['POST'])
+def move():
+    data = request.json
+    dx, dy = data['dx'], data['dy']
+    pyautogui.moveRel(dx, dy)  # Move relative to current position
+    return "OK", 200
+
+@app.route('/click', methods=['POST'])
+def click():
+    pyautogui.click()
+    return "OK", 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)  # Runs on all network interfaces
+
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
