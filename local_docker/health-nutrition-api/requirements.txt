@@ -1,0 +1,5 @@
+flask
+phidata
+pandas
+pyyaml
+# pip install groq langflow

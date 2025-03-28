@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mac Screen Share</title>
+</head>
+<body>
+    <h2>Mac Screen Sharing</h2>
+    <video id="screenVideo" autoplay playsinline></video>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.10.0/simplepeer.min.js"></script>
+    <script>
+        const socket = io();
+        const video = document.getElementById("screenVideo");
+
+        navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+            const peer = new SimplePeer({ initiator: true, stream });
+
+            peer.on("signal", (data) => socket.emit("offer", data));
+            peer.on("stream", (remoteStream) => {
+                video.srcObject = remoteStream;
+            });
+
+            socket.on("answer", (data) => peer.signal(data));
+            socket.on("ice-candidate", (data) => peer.signal(data));
+        });
+
+        socket.on("offer", (data) => {
+            const peer = new SimplePeer({ initiator: false });
+
+            peer.on("signal", (answer) => socket.emit("answer", answer));
+            peer.on("stream", (stream) => {
+                video.srcObject = stream;
+            });
+
+            peer.signal(data);
+        });
+    </script>
+</body>
+</html>

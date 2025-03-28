@@ -1,3 +1,8 @@
 /react_native_project
 
 *__pycache__
+
+*node_modules/
+
+*.env
+*.DS_Store

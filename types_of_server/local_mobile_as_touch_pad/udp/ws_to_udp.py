@@ -10,6 +10,7 @@ udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 async def handle_client(websocket):
     async for message in websocket:
         try:
+            print(f"Received from WebSocket: {message}")  # Debugging
             udp_socket.sendto(message.encode(), (UDP_IP, UDP_PORT))  # Send raw JSON
         except Exception as e:
             print(f"Error sending UDP: {e}")
